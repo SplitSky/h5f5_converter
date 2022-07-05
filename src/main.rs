@@ -37,6 +37,13 @@ fn read_hdf5() -> Result<()> {
     let ds = file.dataset("info/spectrometer_energy")?; // open the dataset
     let ds2 = file.dataset("info/spectrometer_wavelength")?;
     let ds3 = file.dataset("info/tcspc_axis")?;
+    
+    let a = ds.shape(); // returns a vector
+    
+    for entry in a {
+        println!("{}", entry.to_string());
+    }
+
 
     Ok(())
 }
