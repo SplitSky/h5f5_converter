@@ -9,6 +9,7 @@ use serde_json;
 //#[repr(C)]
 
 //#[derive(H5Type, Clone, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct FileNodeStruct {
     filename: String,
     groups: Vec<GroupStruct>
@@ -22,6 +23,7 @@ impl FileNodeStruct {
         let mut group_list = file.groups().unwrap();
         
         for entry in group_list { // should include error validation
+
             groups.push(GroupStruct::new(entry.name(), entry.groups().unwrap(), entry.datasets().unwrap()))
         }
         Self {filename, groups}
@@ -30,7 +32,7 @@ impl FileNodeStruct {
 
 
 // end of file struct
-
+#[derive(Serialize, Deserialize)]
 pub struct GroupStruct {
     key: String,
     groups: Vec<GroupStruct>,
@@ -72,6 +74,7 @@ impl GroupStruct {
 
 // 1D, 2D, 3D, pic, plain
 // 1d array data set
+#[derive(Serialize, Deserialize)]
 pub struct DataSetStruct1D {
     id: String,
     data: ndarray::Array1<f64>,
@@ -85,6 +88,8 @@ impl DataSetStruct1D {
     }
 }
 // 2d array data set
+//
+#[derive(Serialize, Deserialize)]
 pub struct DataSetStruct2D {
     id: String,
     data: ndarray::Array2<f64>,
@@ -97,7 +102,10 @@ impl DataSetStruct2D {
     }
 }
 
+
+
 // 3d array data set
+#[derive(Serialize, Deserialize)]
 pub struct DataSetStruct3D {
     id: String,
     data: ndarray::ArrayD<f64>,
@@ -117,16 +125,16 @@ fn read_hdf5() -> Result<()> {
     b.push(vec!["nanowire_data.h5"]);
     b.push(vec!["info", "spectrometer_energy", "spectrometer_wavelength"]);
     b.push(vec!["nanowires", "fitting_errors", "geometry", "pic", "power_dependent_tcspc", "spectral_bottom", "spectral_top", "tcspc_bottom", "tcspc_top"]);
-  
-
     let filename_init = "nanowire_data.h5";
     let file = File::open(filename_init).unwrap(); // open file for reading
     // created file object
+    println!("File Loaded");
     let node = FileNodeStruct::new(filename_init.to_string(), &file);
-         
+    println!("Object created");    
     // convert the FileNode into a JSON file using Serde
-    //let j = serde_json::to_string(&mut node).unwrap();
-     
+    let j = serde_json::to_string(&node).unwrap();
+    println!("JSON done");
+    dbg!(j); 
 
     Ok(())
 }
