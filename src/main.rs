@@ -28,6 +28,12 @@ impl FileNodeStruct {
         }
         Self {filename, groups}
     }
+
+    pub fn show_data(&self) {
+        print!("Traversing the data structure");
+        
+
+    }
 }
 
 
@@ -63,7 +69,7 @@ impl GroupStruct {
                 data_set1D.push(DataSetStruct1D::new(entry))
             } else if shape.len() == 2 {
                 data_set2D.push(DataSetStruct2D::new(entry))
-            } else if shape.len() == 3 {
+            } else if shape.len() >= 3 {
                 data_set3D.push(DataSetStruct3D::new(entry))
             }
         }
@@ -121,10 +127,10 @@ impl DataSetStruct3D {
 
 fn read_hdf5() -> Result<()> {
     
-    let mut b = Vec::new();
-    b.push(vec!["nanowire_data.h5"]);
-    b.push(vec!["info", "spectrometer_energy", "spectrometer_wavelength"]);
-    b.push(vec!["nanowires", "fitting_errors", "geometry", "pic", "power_dependent_tcspc", "spectral_bottom", "spectral_top", "tcspc_bottom", "tcspc_top"]);
+    //let mut b = Vec::new();
+    //b.push(vec!["nanowire_data.h5"]);
+    //b.push(vec!["info", "spectrometer_energy", "spectrometer_wavelength"]);
+    //b.push(vec!["nanowires", "fitting_errors", "geometry", "pic", "power_dependent_tcspc", "spectral_bottom", "spectral_top", "tcspc_bottom", "tcspc_top"]);
     let filename_init = "nanowire_data.h5";
     let file = File::open(filename_init).unwrap(); // open file for reading
     // created file object
@@ -134,8 +140,9 @@ fn read_hdf5() -> Result<()> {
     // convert the FileNode into a JSON file using Serde
     let j = serde_json::to_string(&node).unwrap();
     println!("JSON done");
-    dbg!(j); 
-
+    //dbg!(j);
+    //let file_json = File::create("nanowire_data.json").unwrap();
+    std::fs::write("nanowire_data.json",j).unwrap();
     Ok(())
 }
 
